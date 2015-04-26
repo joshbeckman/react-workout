@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-type" />
+    <title>React Workout</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <style type="text/css">
+      body{
+        margin:0 auto;
+        max-width: 500px;
+      }
+      textarea{
+        display: block;
+      }
+      #div{
+      }
+    </style>
+  </head>
+    <body>
+        <div id="div">
+           <label for="scratch">Scratchpad
+                <textarea name="scratch">
+                    Anything you type here will show up upon your return 
+                    (like your previous weights)
+                </textarea>
+            </label><br/>
+            <label for="weight">Weight
+                <input name="weight" type="number" value="0"></input>
+            </label><br/>
+            <label for="reps">Reps
+                <input name="reps" type="number" value="0"></input>
+            </label><br/>
+            One Rep Max: <span name="orm">0</span><br/>
+            <label for="week">Week
+                <select name="week">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </label>
+            <table name="weekTable">
+                <caption>Week 1: <small>5 reps each</small></caption>
+                <tr>
+                    <th>60%</th>
+                    <th>65%</th>
+                    <th>75%</th>
+                    <th>75%</th>
+                </tr>
+                <tr>
+                    <td data-val="0.60">0</td>
+                    <td data-val="0.65">0</td>
+                    <td data-val="0.75">0</td>
+                    <td data-val="0.75">0</td>
+                </tr>
+            </table>
+        </div>
+
+        <script 
+            src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react-with-addons.js">
+        </script>
+        <script type="text/javascript">
+            function gogo(){
+            }
+            window.addEventListener('load', gogo);
+        </script>
+    </body>
+</html>
