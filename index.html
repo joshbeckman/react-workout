@@ -88,44 +88,97 @@
             WorkoutForm = React.createClass({
                 getInitialState: function() {
                     return {
-                        reps:   0,
+                        reps:   10,
                         weight: 0,
-                        week:   1
+                        week:   1,
+                        multi:  1,
+                        orm:    0
                     }
                 },
+                calcORM: function(weight, reps, multi) {
+                    weight = weight || this.state.weight;
+                    reps = reps || this.state.reps;
+                    multi = multi || this.state.multi;
+                    this.setState({
+                        weight: weight,
+                        reps:   reps,
+                        multi:  multi,
+                        orm: _workout.calcOrm(
+                                weight,
+                                reps,
+                                multi
+                            )
+                    });
+                },
                 render: function(){
-                    _workout.elements.orm = React.createElement(
-                        ORM
-                    );
                     return (
                         <div className="workout">
-                            {_workout.elements.orm}
+                            <RepsInput 
+                                onChange={this.calcORM} 
+                                value={this.state.reps}
+                            />
+                            <WeightInput 
+                                onChange={this.calcORM} 
+                                value={this.state.weight} 
+                            />
+                            <ORM 
+                                max={this.state.orm} 
+                            />
                         </div>
                     );
                 }
             });
-            ORM = React.createClass({
+            RepsInput = React.createClass({
                 getInitialState: function() {
                     return {
-                        reps:   0,
-                        weight: 0,
-                        multi:  1,
-                        max:    0
-                    }
+                        value:  this.props.value
+                    };
                 },
-                calc: function() {
-                    this.setState({
-                        max: _workout.calcOrm(
-                                this.weight,
-                                this.reps,
-                                this.multi
-                            )
-                    });
+                handleChange: function(e) {
+                    this.props.onChange(null, e.target.value);
                 },
                 render: function() {
                     return (
+                        <label>
+                            <span>Reps:</span>
+                            <input 
+                                type="number" 
+                                name="reps" 
+                                defaultValue={this.state.value} 
+                                onChange={this.handleChange}
+                            />
+                        </label>
+                    );
+                }
+            });
+            WeightInput = React.createClass({
+                getInitialState: function() {
+                    return {
+                        value:  this.props.value
+                    };
+                },
+                handleChange: function(e) {
+                    this.props.onChange(e.target.value);
+                },
+                render: function() {
+                    return (
+                        <label>
+                            <span>Weight:</span>
+                            <input 
+                                type="number" 
+                                name="weight" 
+                                defaultValue={this.state.value} 
+                                onChange={this.handleChange}
+                            />
+                        </label>
+                    );
+                }
+            });
+            ORM = React.createClass({
+                render: function() {
+                    return (
                         <p className="orm">
-                            One Rep Max: {this.state.max}
+                            One Rep Max: {this.props.max}
                         </p>
                     );
                 }
