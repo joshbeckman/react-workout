@@ -14,6 +14,13 @@
       }
       #div{
       }
+      .orm{
+        text-shadow: 0 0 0px;
+      }
+      .orm.active{
+        text-shadow: 0 0 100px;
+        transition: 0.5s ease-out;
+      }
     </style>
   </head>
     <body>
@@ -92,7 +99,8 @@
                         weight: 0,
                         week:   1,
                         multi:  1,
-                        orm:    0
+                        orm:    0,
+                        ormClass: 'orm'
                     }
                 },
                 calcORM: function(weight, reps, multi) {
@@ -107,7 +115,14 @@
                                 weight,
                                 reps,
                                 multi
-                            )
+                            ),
+                        ormClass: 'orm active'
+                    });
+                    setTimeout(this.removeActive, 500);
+                },
+                removeActive: function() {
+                    this.setState({
+                        ormClass: 'orm'
                     });
                 },
                 render: function(){
@@ -123,6 +138,7 @@
                             />
                             <ORM 
                                 max={this.state.orm} 
+                                class={this.state.ormClass}
                             />
                         </div>
                     );
@@ -177,7 +193,7 @@
             ORM = React.createClass({
                 render: function() {
                     return (
-                        <p className="orm">
+                        <p className={this.props.class}>
                             One Rep Max: {this.props.max}
                         </p>
                     );
