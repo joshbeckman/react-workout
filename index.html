@@ -17,6 +17,9 @@
     </style>
   </head>
     <body>
+        <h1 class="headline">
+            React Workout
+        </h1>
         <div id="div">
            <label for="scratch">Scratchpad
                 <textarea name="scratch">
@@ -59,7 +62,10 @@
         <script 
             src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react-with-addons.js">
         </script>
-        <script type="text/javascript">
+        <script 
+            src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js">
+        </script>
+        <script type="text/jsx">
             // make calculator fn
             // make weeks object
             // make cookie setter fn
@@ -68,13 +74,63 @@
             // make week select component
             // make ORM component
             // make week table component
-            var ORM,
+            var _workout = window._workout || {
+                        elements:       {}
+                    },
+                ORM,
+                Scratch,
+                WorkoutForm,
                 WeightInput,
                 RepsInput,
                 WeekSelect,
                 WeekTable;
 
-            function setCookie(cname, cvalue, exdays) {
+            WorkoutForm = React.createClass({
+                getInitialState: function() {
+                    return {
+                        reps:   0,
+                        weight: 0,
+                        week:   1
+                    }
+                },
+                render: function(){
+                    _workout.elements.orm = React.createElement(
+                        ORM
+                    );
+                    return (
+                        <div className="workout">
+                            {_workout.elements.orm}
+                        </div>
+                    );
+                }
+            });
+            ORM = React.createClass({
+                getInitialState: function() {
+                    return {
+                        reps:   0,
+                        weight: 0,
+                        multi:  1,
+                        max:    0
+                    }
+                },
+                calc: function() {
+                    this.setState({
+                        max: _workout.calcOrm(
+                                this.weight,
+                                this.reps,
+                                this.multi
+                            )
+                    });
+                },
+                render: function() {
+                    return (
+                        <p className="orm">
+                            One Rep Max: {this.state.max}
+                        </p>
+                    );
+                }
+            });
+            _workout.setCookie = function (cname, cvalue, exdays) {
                 var d = new Date()
                     expires;
 
@@ -82,8 +138,8 @@
                 d.setTime(d.getTime() + (exdays*24*60*60*1000));
                 expires = "expires="+d.toUTCString();
                 document.cookie = cname + "=" + cvalue + "; " + expires;
-            }
-            function getCookie(cname) {
+            };
+            _workout.getCookie = function (cname) {
                 var name = cname + "=",
                     ca = document.cookie.split(';'),
                     c;
@@ -94,10 +150,28 @@
                     if (c.indexOf(name) === 0) return c.substring(name.length,c.length);
                 }
                 return "No cookie present";
+            };
+            _workout.calcOrm = function (w, r, multiplier){
+                var base = Math.round(
+                    (
+                        w / (
+                            1.0278 - ( 0.0278 * r) ) * 
+                        multiplier
+                    )
+                );
+
+                return base;
+            };
+            _workout.gogo = function (){
+                _workout.elements = {
+                    form:       React.createElement(WorkoutForm)
+                };
+                React.render(
+                    _workout.elements.form,
+                    document.getElementById('div')
+                );
             }
-            function gogo(){
-            }
-            window.addEventListener('load', gogo);
+            window.addEventListener('load', _workout.gogo);
         </script>
     </body>
 </html>
