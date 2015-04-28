@@ -9,15 +9,28 @@
         margin:0 auto;
         max-width: 500px;
         text-align: center;
+        font-family: monospace;
       }
       textarea{
         display: block;
+        font-family: monospace;
+        width: 100%;
+      }
+      label {
+        display: block;
+        padding: 0.5em;
+      }
+      input[type="number"] {
+        width: 50px;
+        margin: 0em 0.5em 0;
+        font-family: monospace;
       }
       #div{
       }
       .orm{
         font-size: 2em;
         text-shadow: 0 0 0px;
+        display: block;
       }
       .orm.active{
         text-shadow: 0 0 10px #ddd;
@@ -32,7 +45,7 @@
   </head>
     <body>
         <h1 class="headline">
-            React Workout
+            <span>React Workout</span>
         </h1>
         <textarea id="scratch">
             Anything you type here will show up upon your return 
@@ -47,9 +60,6 @@
             src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js">
         </script>
         <script type="text/jsx">
-            // make cookie setter fn
-            // make cookie getter fn
-
             var _workout = window._workout || {
                         elements:       {}
                     },
@@ -261,7 +271,7 @@
                 render: function() {
                     return (
                         <label>
-                            <span>Weight:</span>
+                            <span>Wght:</span>
                             <input 
                                 type="number" 
                                 name="weight" 
@@ -276,7 +286,7 @@
                 render: function() {
                     return (
                         <p>
-                            One Rep Max: <span className={this.props.class}>{this.props.max}</span>
+                            One Rep Max <span className={this.props.class}>{this.props.max}</span>
                         </p>
                     );
                 }
