@@ -8,6 +8,7 @@
       body{
         margin:0 auto;
         max-width: 500px;
+        text-align: center;
       }
       textarea{
         display: block;
@@ -15,57 +16,30 @@
       #div{
       }
       .orm{
+        font-size: 2em;
         text-shadow: 0 0 0px;
       }
       .orm.active{
-        text-shadow: 0 0 100px;
+        text-shadow: 0 0 10px #ddd;
         transition: 0.5s ease-out;
       }
+      .weekTable{
+        max-width: 50%;
+        width: 200px;
+        margin: 0 auto;
+    }
     </style>
   </head>
     <body>
         <h1 class="headline">
             React Workout
         </h1>
+        <textarea id="scratch">
+            Anything you type here will show up upon your return 
+            (like your previous weights)
+        </textarea>
         <div id="div">
-           <label for="scratch">Scratchpad
-                <textarea name="scratch">
-                    Anything you type here will show up upon your return 
-                    (like your previous weights)
-                </textarea>
-            </label><br/>
-            <label for="weight">Weight
-                <input name="weight" type="number" value="0"></input>
-            </label><br/>
-            <label for="reps">Reps
-                <input name="reps" type="number" value="0"></input>
-            </label><br/>
-            One Rep Max: <span name="orm">0</span><br/>
-            <label for="week">Week
-                <select name="week">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                </select>
-            </label>
-            <table name="weekTable">
-                <caption>Week 1: <small>5 reps each</small></caption>
-                <tr>
-                    <th>60%</th>
-                    <th>65%</th>
-                    <th>75%</th>
-                    <th>75%</th>
-                </tr>
-                <tr>
-                    <td data-val="0.60">0</td>
-                    <td data-val="0.65">0</td>
-                    <td data-val="0.75">0</td>
-                    <td data-val="0.75">0</td>
-                </tr>
-            </table>
         </div>
-
         <script 
             src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/react-with-addons.js">
         </script>
@@ -73,14 +47,9 @@
             src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.1/JSXTransformer.js">
         </script>
         <script type="text/jsx">
-            // make calculator fn
-            // make weeks object
             // make cookie setter fn
             // make cookie getter fn
-            // make input components
-            // make week select component
-            // make ORM component
-            // make week table component
+
             var _workout = window._workout || {
                         elements:       {}
                     },
@@ -100,9 +69,44 @@
                         week:   1,
                         multi:  1,
                         orm:    0,
-                        ormClass: 'orm'
+                        ormClass: 'orm',
+                        weekObject:     this.weekArray[0],
                     }
                 },
+                weekArray: [
+                    {
+                        orm:        0,
+                        reps:       5,
+                        one:        60,
+                        two:        65,
+                        three:      75,
+                        four:       75
+                    },
+                    {
+                        orm:        0,
+                        reps:       4,
+                        one:        65,
+                        two:        75,
+                        three:      85,
+                        four:       85
+                    },
+                    {
+                        orm:        0,
+                        reps:       3,
+                        one:        70,
+                        two:        80,
+                        three:      90,
+                        four:       90
+                    },
+                    {
+                        orm:        1000,
+                        reps:       10,
+                        one:        40,
+                        two:        55,
+                        three:      60,
+                        four:       60
+                    }
+                ],
                 calcORM: function(weight, reps, multi) {
                     weight = weight || this.state.weight;
                     reps = reps || this.state.reps;
@@ -118,7 +122,19 @@
                             ),
                         ormClass: 'orm active'
                     });
+                    this.calcWeek(this.week || 1);
                     setTimeout(this.removeActive, 500);
+                },
+                calcWeek: function(position) {
+                    var week = this.weekArray[
+                        parseInt(position, 10) - 1
+                    ];
+
+                    week.orm = this.state.orm;
+                    this.setState({
+                        weekObject:     week,
+                        week:           parseInt(position, 10) + 1
+                    });
                 },
                 removeActive: function() {
                     this.setState({
@@ -140,10 +156,76 @@
                                 max={this.state.orm} 
                                 class={this.state.ormClass}
                             />
+                            <WeekSelect 
+                                onChange={this.calcWeek} 
+                                value={this.state.week} 
+                            />
+                            <WeekTable 
+                                orm={this.state.orm} 
+                                one={this.state.weekObject.one} 
+                                two={this.state.weekObject.two} 
+                                three={this.state.weekObject.three} 
+                                four={this.state.weekObject.four} 
+                                reps={this.state.weekObject.reps} 
+                            />
                         </div>
                     );
                 }
             });
+            WeekTable = React.createClass({
+                render: function() {
+                    return (
+                    <table className="weekTable">
+                        <caption>Perform {this.props.reps} reps each</caption>
+                        <tbody>
+                            <tr>
+                                <th>{this.props.one}%</th>
+                                <th>{this.props.two}%</th>
+                                <th>{this.props.three}%</th>
+                                <th>{this.props.four}%</th>
+                            </tr>
+                            <tr>
+                                <td>{_workout.calcOfOrm(
+                                    this.props.one,
+                                    this.props.orm)}</td>
+                                <td>{_workout.calcOfOrm(
+                                    this.props.two,
+                                    this.props.orm)}</td>
+                                <td>{_workout.calcOfOrm(
+                                    this.props.three,
+                                    this.props.orm)}</td>
+                                <td>{_workout.calcOfOrm(
+                                    this.props.four,
+                                    this.props.orm)}</td>
+                            </tr>
+                        </tbody>
+                    </table>);
+                }
+            });
+            WeekSelect = React.createClass({
+                getInitialState: function() {
+                    return {
+                        value:  this.props.value
+                    };
+                },
+                handleChange: function(e) {
+                    this.props.onChange(e.target.value);
+                },
+                render: function() {
+                    return (
+                        <select 
+                            name="week" 
+                            defaultValue={this.state.value} 
+                            onChange={this.handleChange}
+                        >
+                            <option value="1">Week 1</option>
+                            <option value="2">Week 2</option>
+                            <option value="3">Week 3</option>
+                            <option value="4">Week 4</option>
+                        </select>
+                    );
+                }
+            }),
             RepsInput = React.createClass({
                 getInitialState: function() {
                     return {
@@ -193,15 +275,23 @@
             ORM = React.createClass({
                 render: function() {
                     return (
-                        <p className={this.props.class}>
-                            One Rep Max: {this.props.max}
+                        <p>
+                            One Rep Max: <span className={this.props.class}>{this.props.max}</span>
                         </p>
                     );
                 }
             });
+            _workout.readScratch = function (){
+                var s = document.querySelector('#scratch')
+                
+                s.value = _workout.getCookie('wkScratch');
+                s.addEventListener('change', function(e){
+                    _workout.setCookie('wkScratch', e.target.value);
+                }, false);
+            }
             _workout.setCookie = function (cname, cvalue, exdays) {
                 var d = new Date()
-                    expires;
+                    expires = 240000000;
 
                 exdays = exdays || 360;
                 d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -220,6 +310,9 @@
                 }
                 return "No cookie present";
             };
+            _workout.calcOfOrm = function (p, o){
+                return Math.round( ( (p / 100) * o ) / 5 ) * 5;
+            };
             _workout.calcOrm = function (w, r, multiplier){
                 var base = Math.round(
                     (
@@ -232,6 +325,7 @@
                 return base;
             };
             _workout.gogo = function (){
+                _workout.readScratch();
                 _workout.elements = {
                     form:       React.createElement(WorkoutForm)
                 };
